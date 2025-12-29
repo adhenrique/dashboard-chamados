@@ -1,5 +1,3 @@
-// Generate dynamic ticket data for the dashboard
-
 export const generateTicketData = () => {
   const departments = ['TI', 'RH', 'Comercial', 'Financeiro', 'Pré-impressão', 'Marketing'];
   const categories = ['Technical', 'Billing', 'General Inquiry', 'Bug Report', 'Feature Request', 'Account'];
