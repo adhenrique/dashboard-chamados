@@ -14,7 +14,6 @@ export const generateTicketData = () => {
     departmentData: departments.map(dept => ({
       department: dept,
       openTickets: Math.floor(Math.random() * 50) + 10,
-      // avgCloseTime: Math.floor(Math.random() * (maxMinutes - minMinutes + 1)) + minMinutes,
       avgCloseTime: Math.floor(Math.random() * 48) + 4, // hours
     })),
 
