@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 interface GaugeChartProps {
   value: number;
   label: string;
+  loading: boolean;
 }
 
-export const GaugeChart = ({ value, label }: GaugeChartProps) => {
+export const GaugeChart = ({ value, label, loading }: GaugeChartProps) => {
   const [animatedValue, setAnimatedValue] = useState(0);
 
   useEffect(() => {
@@ -27,7 +28,8 @@ export const GaugeChart = ({ value, label }: GaugeChartProps) => {
   };
 
   return (
-      <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+      <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.1s' }}>
+        {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
         <h3 className="text-sm font-medium text-muted-foreground mb-2">{label}</h3>
         <div className="relative flex flex-col items-center justify-center">
           <svg

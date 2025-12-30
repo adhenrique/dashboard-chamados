@@ -2,11 +2,13 @@ import { CheckCircle2 } from 'lucide-react';
 
 interface ResolutionRateIndicatorProps {
   rate: number;
+    loading: boolean;
 }
 
-export const ResolutionRateIndicator = ({ rate }: ResolutionRateIndicatorProps) => {
+export const ResolutionRateIndicator = ({ rate, loading }: ResolutionRateIndicatorProps) => {
   return (
-    <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+    <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.6s' }}>
+      {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
       <h3 className="text-sm font-medium text-muted-foreground mb-4">Taxa de resolução</h3>
       <div className="flex items-center gap-4">
         <div className="relative">

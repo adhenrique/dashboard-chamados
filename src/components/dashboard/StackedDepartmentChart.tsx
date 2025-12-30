@@ -1,81 +1,113 @@
 import {
-    BarChart,
+    ComposedChart,
+    Line,
     Bar,
     XAxis,
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer,
     Legend,
+    ResponsiveContainer
 } from 'recharts';
 
-interface DepartmentData {
-  department: string;
+interface StackedData {
+  name: string;
   openTickets: number;
   avgCloseTime: number;
 }
 
 interface StackedDepartmentChartProps {
-  data: DepartmentData[];
+  data: StackedData[];
+    loading: boolean;
 }
 
-export const StackedDepartmentChart = ({ data }: StackedDepartmentChartProps) => {
-  return (
-    <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-      <h3 className="text-sm font-medium text-muted-foreground mb-4">
-        Quantidade e tempo médio de resolução por setor
-      </h3>
-      <div className="h-[280px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-            <XAxis
-              dataKey="department"
-              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-              axisLine={{ stroke: 'hsl(var(--border))' }}
-            />
-            <YAxis
-              yAxisId="left"
-              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-              axisLine={{ stroke: 'hsl(var(--border))' }}
-            />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-              axisLine={{ stroke: 'hsl(var(--border))' }}
-            />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: 'hsl(var(--card))',
-                border: '1px solid hsl(var(--border))',
-                borderRadius: '8px',
-                color: 'hsl(var(--foreground))',
-              }}
-            />
-            <Legend
-              wrapperStyle={{ paddingTop: '20px' }}
-              formatter={(value) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{value}</span>}
-            />
-            <Bar
-              yAxisId="left"
-              dataKey="openTickets"
-              stackId="a"
-              fill="hsl(var(--primary))"
-              name="Qtd de Tickets"
-              radius={[0, 0, 4, 4]}
-            />
-            <Bar
-              yAxisId="left"
-              dataKey="avgCloseTime"
-              stackId="a"
-              fill="hsl(var(--accent))"
-              name="Tempo médio (hr)"
-              radius={[4, 4, 0, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
+export const StackedDepartmentChart = ({ data, loading }: StackedDepartmentChartProps) => {
+    return (
+        <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.3s' }}>
+            {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
+            <h3 className="text-sm font-medium text-muted-foreground mb-4">
+                Quantidade e tempo médio de resolução por setor
+            </h3>
+            <div className="h-[350px]">
+                <ResponsiveContainer width="100%" height="100%">
+                    <ComposedChart
+                        data={data}
+                        margin={{ top: 20, right: 30, left: 0, bottom: 20 }}
+                    >
+                        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+
+                        {/* Eixo X com rotação para nomes longos */}
+                        <XAxis
+                            dataKey="name"
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                            axisLine={{ stroke: 'hsl(var(--border))' }}
+                            interval={0}
+                            angle={-45}
+                            textAnchor="end"
+                            height={60}
+                        />
+
+                        {/* Eixo Y da Esquerda (Quantidade) */}
+                        <YAxis
+                            yAxisId="left"
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                            axisLine={{ stroke: 'hsl(var(--border))' }}
+                            label={{
+                                value: 'Qtd Tickets',
+                                angle: -90,
+                                position: 'insideLeft',
+                                style: { fill: 'hsl(var(--muted-foreground))', fontSize: 10 }
+                            }}
+                        />
+
+                        {/* Eixo Y da Direita (Tempo) */}
+                        <YAxis
+                            yAxisId="right"
+                            orientation="right"
+                            tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
+                            axisLine={{ stroke: 'hsl(var(--border))' }}
+                            unit="h"
+                        />
+
+                        <Tooltip
+                            contentStyle={{
+                                backgroundColor: 'hsl(var(--card))',
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '8px',
+                                color: 'hsl(var(--foreground))',
+                            }}
+                            cursor={{ fill: 'hsl(var(--muted)/0.2)' }}
+                        />
+
+                        <Legend
+                            wrapperStyle={{ paddingTop: '10px' }}
+                            formatter={(value) => <span style={{ color: 'hsl(var(--muted-foreground))' }}>{value}</span>}
+                        />
+
+                        {/* BARRAS: Volume de Tickets (Eixo Esquerdo) */}
+                        <Bar
+                            yAxisId="left"
+                            dataKey="openTickets"
+                            fill="hsl(var(--primary))"
+                            name="Qtd de Tickets"
+                            radius={[4, 4, 0, 0]}
+                            barSize={30} // Largura fixa para ficar elegante
+                        />
+
+                        {/* LINHA: Tempo Médio (Eixo Direito) */}
+                        <Line
+                            yAxisId="right"
+                            type="monotone" // Curva suave
+                            dataKey="avgCloseTime"
+                            stroke="hsl(var(--accent))"
+                            strokeWidth={2}
+                            name="Tempo médio (hr)"
+                            dot={{ r: 4, fill: 'hsl(var(--accent))' }}
+                            activeDot={{ r: 6 }}
+                        />
+                    </ComposedChart>
+                </ResponsiveContainer>
+            </div>
+        </div>
+    );
 };

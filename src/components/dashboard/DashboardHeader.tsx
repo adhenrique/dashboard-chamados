@@ -4,12 +4,13 @@ import { DateRangeFilter, DateRange } from './DateRangeFilter';
 
 interface DashboardHeaderProps {
   onRefresh: () => void;
+  isLoading?: boolean;
   lastUpdated: Date;
   dateRange: DateRange;
   onDateRangeChange: (range: DateRange) => void;
 }
 
-export const DashboardHeader = ({ onRefresh, lastUpdated, dateRange, onDateRangeChange }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ onRefresh, isLoading = false, lastUpdated, dateRange, onDateRangeChange }: DashboardHeaderProps) => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
       <div>
@@ -22,14 +23,17 @@ export const DashboardHeader = ({ onRefresh, lastUpdated, dateRange, onDateRange
           <span className="hidden sm:inline">Ultima atualização: {lastUpdated.toLocaleTimeString()}</span>
         </div>
         <DateRangeFilter value={dateRange} onChange={onDateRangeChange} />
-        <Button 
-          variant="outline" 
-          size="sm" 
-          onClick={onRefresh}
-          className="border-border hover:bg-secondary hover:text-accent"
+        <Button
+            variant="outline"
+            size="sm"
+            onClick={onRefresh}
+            disabled={isLoading}
+            className="border-border hover:bg-secondary hover:text-accent"
         >
-          <RefreshCw className="w-4 h-4 mr-2" />
-          Atualizar
+          <RefreshCw
+              className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`}
+          />
+          {isLoading ? 'Atualizando...' : 'Atualizar'}
         </Button>
       </div>
     </div>

@@ -6,9 +6,10 @@ interface KPICardProps {
   icon: LucideIcon;
   trend?: number;
   variant: 'primary' | 'accent' | 'success';
+  loading: boolean;
 }
 
-export const KPICard = ({ title, value, icon: Icon, trend, variant }: KPICardProps) => {
+export const KPICard = ({ title, value, icon: Icon, trend, variant, loading = false }: KPICardProps) => {
   const variantStyles = {
     primary: 'text-primary',
     accent: 'text-accent',
@@ -22,7 +23,8 @@ export const KPICard = ({ title, value, icon: Icon, trend, variant }: KPICardPro
   };
 
   return (
-    <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+    <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.2s' }}>
+      {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl"></div>}
       <div className="flex items-start justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>

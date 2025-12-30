@@ -12,9 +12,10 @@ interface HeatMapData {
 
 interface TicketHeatMapProps {
   data: HeatMapData[];
+  loading: boolean;
 }
 
-export const TicketHeatMap = ({ data }: TicketHeatMapProps) => {
+export const TicketHeatMap = ({ data, loading }: TicketHeatMapProps) => {
   const getDynamicStyle = (value: number) => {
     if (value === 0) {
       return { backgroundColor: 'rgba(243, 244, 246, 1)' };
@@ -31,7 +32,8 @@ export const TicketHeatMap = ({ data }: TicketHeatMapProps) => {
   const hours = [1, 5, 9, 13, 17, 21];
 
   return (
-      <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+      <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.5s' }}>
+        {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-sm font-medium text-muted-foreground">
             Mapa de calor do volume de chamados

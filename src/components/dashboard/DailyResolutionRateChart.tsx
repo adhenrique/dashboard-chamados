@@ -15,6 +15,7 @@ interface DailyResolutionData {
 
 interface DailyResolutionRateChartProps {
     data: DailyResolutionData[];
+    loading: boolean;
 }
 
 const RADIAN = Math.PI / 180;
@@ -39,9 +40,10 @@ const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, per
     );
 };
 
-export const DailyResolutionRateChart = ({ data }: DailyResolutionRateChartProps) => {
+export const DailyResolutionRateChart = ({ data, loading }: DailyResolutionRateChartProps) => {
     return (
-        <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+        <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.4s' }}>
+            {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
             <h3 className="text-sm font-medium text-muted-foreground mb-4">
                 Taxa de resolução no mesmo dia
             </h3>
