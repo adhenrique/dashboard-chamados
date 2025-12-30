@@ -22,7 +22,7 @@ export const TicketHeatMap = ({ data, loading }: TicketHeatMapProps) => {
     }
 
     const intensity = Math.min(value / HEATMAP_CONFIG.MAX_VALUE, 1);
-    const adjustedAlpha = (intensity * 0.8) + 0.2;
+    const adjustedAlpha = intensity * 0.8 + 0.2;
 
     return {
       backgroundColor: `hsl(var(--primary) / ${adjustedAlpha})`,
@@ -32,72 +32,76 @@ export const TicketHeatMap = ({ data, loading }: TicketHeatMapProps) => {
   const hours = [1, 5, 9, 13, 17, 21];
 
   return (
-      <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.5s' }}>
-        {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-sm font-medium text-muted-foreground">
-            Mapa de calor do volume de chamados
-          </h3>
-          <span className="text-xs text-muted-foreground bg-secondary px-2 py-1 rounded">
+    <div className="glass-card animate-fade-in relative p-6" style={{ animationDelay: '0.5s' }}>
+      {loading && (
+        <div className="absolute left-0 top-0 z-40 h-[100%] w-[100%] rounded-xl bg-white bg-opacity-70"></div>
+      )}
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-sm font-medium text-muted-foreground">
+          Mapa de calor do volume de chamados
+        </h3>
+        <span className="rounded bg-secondary px-2 py-1 text-xs text-muted-foreground">
           Max: {HEATMAP_CONFIG.MAX_VALUE} chamados
         </span>
-        </div>
+      </div>
 
-        <div className="overflow-x-auto">
-          <div className="min-w-[600px]">
-            {/* Hour labels */}
-            <div className="flex mb-2 ml-12">
-              {hours.map((hour) => (
-                  <div key={hour} className="flex-1 text-center text-xs text-muted-foreground">
-                    {hour.toString().padStart(2, '0')}:00
-                  </div>
-              ))}
-            </div>
-
-            {/* Heat map grid */}
-            {data.map((dayData) => (
-                <div key={dayData.day} className="flex items-center mb-1">
-                  <span className="w-12 text-xs text-muted-foreground">{dayData.day}</span>
-                  <div className="flex-1 flex gap-1">
-                    {dayData.hours.map((hourData) => (
-                        <Tooltip key={hourData.hour}>
-                          <TooltipTrigger asChild>
-                            <div
-                                style={getDynamicStyle(hourData.value)}
-                                className="flex-1 h-8 rounded-sm cursor-pointer transition-all hover:brightness-90 hover:scale-[1.02]"
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p className="text-xs">
-                              <span className="font-semibold">{dayData.day} - {hourData.hour}h</span>
-                              <br />
-                              Volume: {hourData.value}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                    ))}
-                  </div>
-                </div>
+      <div className="overflow-x-auto">
+        <div className="min-w-[600px]">
+          {/* Hour labels */}
+          <div className="mb-2 ml-12 flex">
+            {hours.map((hour) => (
+              <div key={hour} className="flex-1 text-center text-xs text-muted-foreground">
+                {hour.toString().padStart(2, '0')}:00
+              </div>
             ))}
+          </div>
 
-            {/* Legenda Dinâmica (Gradient) */}
-            <div className="flex items-center justify-end mt-6 gap-3">
-              <span className="text-xs text-muted-foreground">0</span>
-
-              {/* Barra de Gradiente Visual para representar a escala */}
-              <div
-                  className="h-3 w-32 rounded-full"
-                  style={{
-                    background: `linear-gradient(to right, 
-                      hsl(var(--primary) / 0.1), 
-                      hsl(var(--primary) / 1))`
-                  }}
-              />
-
-              <span className="text-xs text-muted-foreground">{HEATMAP_CONFIG.MAX_VALUE}+</span>
+          {/* Heat map grid */}
+          {data.map((dayData) => (
+            <div key={dayData.day} className="mb-1 flex items-center">
+              <span className="w-12 text-xs text-muted-foreground">{dayData.day}</span>
+              <div className="flex flex-1 gap-1">
+                {dayData.hours.map((hourData) => (
+                  <Tooltip key={hourData.hour}>
+                    <TooltipTrigger asChild>
+                      <div
+                        style={getDynamicStyle(hourData.value)}
+                        className="h-8 flex-1 cursor-pointer rounded-sm transition-all hover:scale-[1.02] hover:brightness-90"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="text-xs">
+                        <span className="font-semibold">
+                          {dayData.day} - {hourData.hour}h
+                        </span>
+                        <br />
+                        Volume: {hourData.value}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
             </div>
+          ))}
+
+          {/* Legenda Dinâmica (Gradient) */}
+          <div className="mt-6 flex items-center justify-end gap-3">
+            <span className="text-xs text-muted-foreground">0</span>
+
+            {/* Barra de Gradiente Visual para representar a escala */}
+            <div
+              className="h-3 w-32 rounded-full"
+              style={{
+                background: `linear-gradient(to right, 
+                      hsl(var(--primary) / 0.1), 
+                      hsl(var(--primary) / 1))`,
+              }}
+            />
+
+            <span className="text-xs text-muted-foreground">{HEATMAP_CONFIG.MAX_VALUE}+</span>
           </div>
         </div>
       </div>
+    </div>
   );
 };

@@ -66,15 +66,17 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
     font-family: 'Inter', sans-serif;
   }
 }
 
 @layer utilities {
   .glass-card {
-    @apply bg-card border border-border rounded-xl;
-    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    @apply rounded-xl border border-border bg-card;
+    box-shadow:
+      0 1px 3px 0 rgba(0, 0, 0, 0.1),
+      0 1px 2px -1px rgba(0, 0, 0, 0.1);
   }
 
   .glow-primary {
@@ -98,7 +100,8 @@
   }
 
   @keyframes pulse-glow {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
@@ -121,8 +124,16 @@
     }
   }
 
-  .heat-low { @apply bg-primary/20; }
-  .heat-medium { @apply bg-primary/50; }
-  .heat-high { @apply bg-accent/70; }
-  .heat-critical { @apply bg-destructive/80; }
+  .heat-low {
+    @apply bg-primary/20;
+  }
+  .heat-medium {
+    @apply bg-primary/50;
+  }
+  .heat-high {
+    @apply bg-accent/70;
+  }
+  .heat-critical {
+    @apply bg-destructive/80;
+  }
 }

@@ -1,23 +1,24 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { endOfMonth, startOfMonth, subMonths } from 'date-fns';
 import { Ticket, TicketCheck } from 'lucide-react';
-import { startOfMonth, endOfMonth, subMonths } from 'date-fns';
-import { GaugeChart } from '@/components/dashboard/GaugeChart';
-import { KPICard } from '@/components/dashboard/KPICard';
-import { StackedDepartmentChart } from '@/components/dashboard/StackedDepartmentChart';
-import { MonthlyComparisonChart } from '@/components/dashboard/MonthlyComparisonChart';
-import { TicketHeatMap } from '@/components/dashboard/TicketHeatMap';
-import { ResolutionRateIndicator } from '@/components/dashboard/ResolutionRateIndicator';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+
+import { DailyResolutionRateChart } from '@/components/dashboard/DailyResolutionRateChart';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { DateRange } from '@/components/dashboard/DateRangeFilter';
-import { DailyResolutionRateChart } from "@/components/dashboard/DailyResolutionRateChart";
-import { indicatorsService, ApiTicket } from '@/services/indicatorsService';
+import { GaugeChart } from '@/components/dashboard/GaugeChart';
+import { KPICard } from '@/components/dashboard/KPICard';
+import { MonthlyComparisonChart } from '@/components/dashboard/MonthlyComparisonChart';
+import { ResolutionRateIndicator } from '@/components/dashboard/ResolutionRateIndicator';
+import { StackedDepartmentChart } from '@/components/dashboard/StackedDepartmentChart';
+import { TicketHeatMap } from '@/components/dashboard/TicketHeatMap';
+import { ApiTicket, indicatorsService } from '@/services/indicatorsService';
 import {
-  transformTicketsToHeatMap,
   transformTicketsToCapacityData,
-  transformTicketsToDepartmentData,
   transformTicketsToCategoryData,
+  transformTicketsToDailyResolution,
+  transformTicketsToDepartmentData,
+  transformTicketsToHeatMap,
   transformTicketsToMonthlyTrend,
-  transformTicketsToDailyResolution
 } from '@/utils/transformers';
 
 const Index = () => {
@@ -41,20 +42,18 @@ const Index = () => {
 
         const [map, trendData] = await Promise.all([
           indicatorsService.getSectorMap(),
-          indicatorsService.getTickets(trendStartDate, trendEndDate)
+          indicatorsService.getTickets(trendStartDate, trendEndDate),
         ]);
 
         setSectorMap(map);
         setTrendTickets(trendData);
-
       } catch (error) {
-        console.error("Erro ao carregar dados estáticos:", error);
+        console.error('Erro ao carregar dados estáticos:', error);
       }
     };
 
     fetchStaticData();
   }, []);
-
 
   const fetchDynamicData = useCallback(async () => {
     if (!dateRange.from || !dateRange.to) return;
@@ -67,7 +66,7 @@ const Index = () => {
       setRawTickets(filteredData);
       setLastUpdated(new Date());
     } catch (error) {
-      console.error("Erro ao buscar tickets filtrados:", error);
+      console.error('Erro ao buscar tickets filtrados:', error);
     } finally {
       setLoading(false);
     }
@@ -76,7 +75,6 @@ const Index = () => {
   useEffect(() => {
     fetchDynamicData();
   }, [fetchDynamicData]);
-
 
   const fetchDashboardData = useCallback(async () => {
     if (!dateRange.from || !dateRange.to) return;
@@ -97,7 +95,7 @@ const Index = () => {
       setTrendTickets(trendData);
       setLastUpdated(new Date());
     } catch (error) {
-      console.error("Erro ao carregar dashboard:", error);
+      console.error('Erro ao carregar dashboard:', error);
     } finally {
       setLoading(false);
     }
@@ -105,15 +103,15 @@ const Index = () => {
 
   const dashboardData = useMemo(() => {
     const totalCreated = rawTickets.length;
-    const totalClosed = rawTickets.filter(ticket =>
-        ticket.stageId === 'DT1068_48:SUCCESS'
+    const totalClosed = rawTickets.filter(
+      (ticket) => ticket.stageId === 'DT1068_48:SUCCESS',
     ).length;
 
-    const calculatedResolutionRate = totalCreated > 0
-        ? Math.round((totalClosed / totalCreated) * 100)
-        : 0;
+    const calculatedResolutionRate =
+      totalCreated > 0 ? Math.round((totalClosed / totalCreated) * 100) : 0;
 
-    const departmentChartData = Object.keys(sectorMap).length > 0
+    const departmentChartData =
+      Object.keys(sectorMap).length > 0
         ? transformTicketsToDepartmentData(rawTickets, sectorMap)
         : [];
 
@@ -135,58 +133,62 @@ const Index = () => {
   }, [rawTickets, sectorMap, trendTickets, dateRange]);
 
   return (
-      <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
-        <div className="max-w-[1600px] mx-auto">
-          <DashboardHeader
-              onRefresh={fetchDashboardData}
-              lastUpdated={lastUpdated}
-              dateRange={dateRange}
-              onDateRangeChange={(range) => setDateRange(range)}
-              isLoading={loading}
+    <div className="min-h-screen bg-background p-4 sm:p-6 lg:p-8">
+      <div className="mx-auto max-w-[1600px]">
+        <DashboardHeader
+          onRefresh={fetchDashboardData}
+          lastUpdated={lastUpdated}
+          dateRange={dateRange}
+          onDateRangeChange={(range) => setDateRange(range)}
+          isLoading={loading}
+        />
+
+        {/* Top row */}
+        <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <GaugeChart
+            value={dashboardData.capacityIndex}
+            label="Índice de capacidade operacional"
+            loading={loading}
           />
+          <KPICard
+            title="Tickets abertos"
+            value={dashboardData.ticketsOpened}
+            icon={Ticket}
+            variant="accent"
+            loading={loading}
+          />
+          <KPICard
+            title="Tickets fechados"
+            value={dashboardData.ticketsClosed}
+            icon={TicketCheck}
+            variant="success"
+            loading={loading}
+          />
+          <ResolutionRateIndicator rate={dashboardData.resolutionRate} loading={loading} />
+        </div>
 
-          {/* Top row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-            <GaugeChart value={dashboardData.capacityIndex} label="Índice de capacidade operacional" loading={loading} />
-            <KPICard
-                title="Tickets abertos"
-                value={dashboardData.ticketsOpened}
-                icon={Ticket}
-                variant="accent"
-                loading={loading}
-            />
-            <KPICard
-                title="Tickets fechados"
-                value={dashboardData.ticketsClosed}
-                icon={TicketCheck}
-                variant="success"
-                loading={loading}
-            />
-            <ResolutionRateIndicator rate={dashboardData.resolutionRate} loading={loading} />
+        {/* Middle row */}
+        <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <StackedDepartmentChart data={dashboardData.departmentData} loading={loading} />
+          <StackedDepartmentChart data={dashboardData.categoryData} loading={loading} />
+        </div>
+
+        <div className="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-4">
+          <div className="lg:col-span-3">
+            <MonthlyComparisonChart data={dashboardData.monthlyData} loading={loading} />
           </div>
 
-          {/* Middle row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
-            <StackedDepartmentChart data={dashboardData.departmentData} loading={loading} />
-            <StackedDepartmentChart data={dashboardData.categoryData} loading={loading} />
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-            <div className="lg:col-span-3">
-              <MonthlyComparisonChart data={dashboardData.monthlyData} loading={loading} />
-            </div>
-
-            <div className="lg:col-span-1">
-              <DailyResolutionRateChart data={dashboardData.dailyResolutionData} loading={loading} />
-            </div>
-          </div>
-
-          {/* Bottom row: Heat Map - AGORA COM DADOS REAIS */}
-          <div className="grid grid-cols-1 gap-4">
-            <TicketHeatMap data={dashboardData.heatMapData} loading={loading} />
+          <div className="lg:col-span-1">
+            <DailyResolutionRateChart data={dashboardData.dailyResolutionData} loading={loading} />
           </div>
         </div>
+
+        {/* Bottom row: Heat Map - AGORA COM DADOS REAIS */}
+        <div className="grid grid-cols-1 gap-4">
+          <TicketHeatMap data={dashboardData.heatMapData} loading={loading} />
+        </div>
       </div>
+    </div>
   );
 };
 

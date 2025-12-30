@@ -1,54 +1,35 @@
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-} from 'recharts';
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 interface DepartmentData {
-    name: string;
-    value: number;
+  name: string;
+  value: number;
 }
 
 interface Top5DepartmentChartProps {
-    data: DepartmentData[];
+  data: DepartmentData[];
 }
 
-export const Top5DepartmentChart = ({ data}: Top5DepartmentChartProps) => {
-    return (
-        <div className="glass-card p-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-            <h3 className="text-sm font-medium text-muted-foreground mb-4">
-                Top 5 Áreas
-            </h3>
-            <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                    data={data}
-                    layout="vertical"
-                    margin={{ top: 16, right: 24, left: 40, bottom: 16 }}
-                >
-                    <CartesianGrid strokeDasharray="3 3" />
+export const Top5DepartmentChart = ({ data }: Top5DepartmentChartProps) => {
+  return (
+    <div className="glass-card animate-fade-in p-6" style={{ animationDelay: '0.4s' }}>
+      <h3 className="mb-4 text-sm font-medium text-muted-foreground">Top 5 Áreas</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart
+          data={data}
+          layout="vertical"
+          margin={{ top: 16, right: 24, left: 40, bottom: 16 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
 
-                    <XAxis type="number" />
+          <XAxis type="number" />
 
-                    <YAxis
-                        type="category"
-                        dataKey="name"
-                        width={120}
-                    />
+          <YAxis type="category" dataKey="name" width={120} />
 
-                    <Tooltip />
+          <Tooltip />
 
-                    <Bar
-                        dataKey="value"
-                        fill="#3b82f6"
-                        radius={[0, 4, 4, 0]}
-                        barSize={20}
-                    />
-                </BarChart>
-            </ResponsiveContainer>
-        </div>
-    );
-}
+          <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={20} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};

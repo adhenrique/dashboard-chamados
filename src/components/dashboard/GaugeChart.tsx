@@ -28,55 +28,52 @@ export const GaugeChart = ({ value, label, loading }: GaugeChartProps) => {
   };
 
   return (
-      <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.1s' }}>
-        {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
-        <h3 className="text-sm font-medium text-muted-foreground mb-2">{label}</h3>
-        <div className="relative flex flex-col items-center justify-center">
-          <svg
-              width="160"
-              height="80"
-              viewBox="0 0 120 60"
-              className="overflow-visible"
-          >
-            <defs>
-              <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor={getColor(value)} stopOpacity="0.5" />
-                <stop offset="100%" stopColor={getColor(value)} stopOpacity="1" />
-              </linearGradient>
-            </defs>
-            <g transform="rotate(180, 60, 60)">
-              <circle
-                  cx="60"
-                  cy="60"
-                  r={radius}
-                  fill="none"
-                  stroke="hsl(var(--muted))"
-                  strokeWidth="10"
-                  strokeLinecap="round"
-                  strokeDasharray={`${maxStroke} ${circumference}`}
-              />
-              <circle
-                  cx="60"
-                  cy="60"
-                  r={radius}
-                  fill="none"
-                  stroke={getColor(value)}
-                  strokeWidth="10"
-                  strokeLinecap="round"
-                  strokeDasharray={`${maxStroke} ${circumference}`}
-                  strokeDashoffset={strokeDashoffset}
-                  className="transition-all duration-1000 ease-out"
-                  style={{
-                    filter: `drop-shadow(0 0 4px ${getColor(value)})`,
-                  }}
-              />
-            </g>
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center pt-10">
-            <span className="text-4xl font-bold text-foreground">{animatedValue}%</span>
-            <span className="text-xs text-muted-foreground mt-1">Aceleração</span>
-          </div>
+    <div className="glass-card animate-fade-in relative p-6" style={{ animationDelay: '0.1s' }}>
+      {loading && (
+        <div className="absolute left-0 top-0 z-40 h-[100%] w-[100%] rounded-xl bg-white bg-opacity-70"></div>
+      )}
+      <h3 className="mb-2 text-sm font-medium text-muted-foreground">{label}</h3>
+      <div className="relative flex flex-col items-center justify-center">
+        <svg width="160" height="80" viewBox="0 0 120 60" className="overflow-visible">
+          <defs>
+            <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor={getColor(value)} stopOpacity="0.5" />
+              <stop offset="100%" stopColor={getColor(value)} stopOpacity="1" />
+            </linearGradient>
+          </defs>
+          <g transform="rotate(180, 60, 60)">
+            <circle
+              cx="60"
+              cy="60"
+              r={radius}
+              fill="none"
+              stroke="hsl(var(--muted))"
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeDasharray={`${maxStroke} ${circumference}`}
+            />
+            <circle
+              cx="60"
+              cy="60"
+              r={radius}
+              fill="none"
+              stroke={getColor(value)}
+              strokeWidth="10"
+              strokeLinecap="round"
+              strokeDasharray={`${maxStroke} ${circumference}`}
+              strokeDashoffset={strokeDashoffset}
+              className="transition-all duration-1000 ease-out"
+              style={{
+                filter: `drop-shadow(0 0 4px ${getColor(value)})`,
+              }}
+            />
+          </g>
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pt-10">
+          <span className="text-4xl font-bold text-foreground">{animatedValue}%</span>
+          <span className="mt-1 text-xs text-muted-foreground">Aceleração</span>
         </div>
       </div>
+    </div>
   );
 };

@@ -1,94 +1,109 @@
 import {
-    PieChart,
-    Pie,
-    Tooltip,
-    ResponsiveContainer,
-    Legend,
-    Cell,
-    PieLabelRenderProps,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  PieLabelRenderProps,
+  ResponsiveContainer,
+  Tooltip,
 } from 'recharts';
 
 interface DailyResolutionData {
-    name: string;
-    value: number;
+  name: string;
+  value: number;
 }
 
 interface DailyResolutionRateChartProps {
-    data: DailyResolutionData[];
-    loading: boolean;
+  data: DailyResolutionData[];
+  loading: boolean;
 }
 
 const RADIAN = Math.PI / 180;
 const COLORS = ['hsl(var(--success))', 'hsl(var(--accent))'];
 
-const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: PieLabelRenderProps) => {
-    if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
-        return null;
-    }
+const renderCustomizedLabel = ({
+  cx,
+  cy,
+  midAngle,
+  innerRadius,
+  outerRadius,
+  percent,
+}: PieLabelRenderProps) => {
+  if (cx == null || cy == null || innerRadius == null || outerRadius == null) {
+    return null;
+  }
 
-    // @ts-expect-error as variáveis podem ser numero ou string
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const ncx = Number(cx);
-    const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
-    const ncy = Number(cy);
-    const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+  // @ts-expect-error as variáveis podem ser numero ou string
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const ncx = Number(cx);
+  const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+  const ncy = Number(cy);
+  const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
 
-    return (
-        <text x={x} y={y} fill="white" textAnchor={x > ncx ? 'start' : 'end'} dominantBaseline="central">
-            {`${((percent ?? 1) * 100).toFixed(0)}%`}
-        </text>
-    );
+  return (
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor={x > ncx ? 'start' : 'end'}
+      dominantBaseline="central"
+    >
+      {`${((percent ?? 1) * 100).toFixed(0)}%`}
+    </text>
+  );
 };
 
 export const DailyResolutionRateChart = ({ data, loading }: DailyResolutionRateChartProps) => {
-    return (
-        <div className="glass-card p-6 animate-fade-in relative" style={{ animationDelay: '0.4s' }}>
-            {loading && <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-white bg-opacity-70 rounded-xl z-40"></div>}
-            <h3 className="text-sm font-medium text-muted-foreground mb-4">
-                Taxa de resolução no mesmo dia
-            </h3>
-            <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie
-                            data={data}
-                            cx="40%"
-                            cy="50%"
-                            outerRadius={80}
-                            dataKey="value"
-                            nameKey="name"
-                            labelLine={false}
-                            label={renderCustomizedLabel}
-                        >
-                            {data.map((_, index) => (
-                                <Cell
-                                    key={`cell-${index}`}
-                                    fill={COLORS[index % COLORS.length]}
-                                    stroke="transparent"
-                                />
-                            ))}
-                        </Pie>
-                        <Tooltip
-                            contentStyle={{
-                                backgroundColor: 'hsl(var(--card))',
-                                border: '1px solid hsl(var(--border))',
-                                borderRadius: '8px',
-                                color: 'hsl(var(--foreground))',
-                            }}
-                        />
-                        <Legend
-                            layout="vertical"
-                            align="right"
-                            verticalAlign="middle"
-                            formatter={(value) => (
-                                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>
-                                  {value}
-                                </span>
-                            )}
-                        />
-                    </PieChart>
-                </ResponsiveContainer>
-            </div>
-        </div>
-    );
-}
+  return (
+    <div className="glass-card animate-fade-in relative p-6" style={{ animationDelay: '0.4s' }}>
+      {loading && (
+        <div className="absolute left-0 top-0 z-40 h-[100%] w-[100%] rounded-xl bg-white bg-opacity-70"></div>
+      )}
+      <h3 className="mb-4 text-sm font-medium text-muted-foreground">
+        Taxa de resolução no mesmo dia
+      </h3>
+      <div className="h-[200px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              cx="40%"
+              cy="50%"
+              outerRadius={80}
+              dataKey="value"
+              nameKey="name"
+              labelLine={false}
+              label={renderCustomizedLabel}
+            >
+              {data.map((_, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                  stroke="transparent"
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                backgroundColor: 'hsl(var(--card))',
+                border: '1px solid hsl(var(--border))',
+                borderRadius: '8px',
+                color: 'hsl(var(--foreground))',
+              }}
+            />
+            <Legend
+              layout="vertical"
+              align="right"
+              verticalAlign="middle"
+              formatter={(value) => (
+                <span style={{ color: 'hsl(var(--muted-foreground))', fontSize: '12px' }}>
+                  {value}
+                </span>
+              )}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+    </div>
+  );
+};

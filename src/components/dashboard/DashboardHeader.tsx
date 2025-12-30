@@ -1,6 +1,8 @@
-import { RefreshCw, Clock } from 'lucide-react';
+import { Clock, RefreshCw } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
-import { DateRangeFilter, DateRange } from './DateRangeFilter';
+
+import { DateRange, DateRangeFilter } from './DateRangeFilter';
 
 interface DashboardHeaderProps {
   onRefresh: () => void;
@@ -10,29 +12,35 @@ interface DashboardHeaderProps {
   onDateRangeChange: (range: DateRange) => void;
 }
 
-export const DashboardHeader = ({ onRefresh, isLoading = false, lastUpdated, dateRange, onDateRangeChange }: DashboardHeaderProps) => {
+export const DashboardHeader = ({
+  onRefresh,
+  isLoading = false,
+  lastUpdated,
+  dateRange,
+  onDateRangeChange,
+}: DashboardHeaderProps) => {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <h1 className="text-3xl font-bold gradient-text">Indicadores de chamados - Grupo Elyon</h1>
-        <p className="text-muted-foreground mt-1">Análises e insights em tempo real</p>
+        <h1 className="gradient-text text-3xl font-bold">Indicadores de chamados - Grupo Elyon</h1>
+        <p className="mt-1 text-muted-foreground">Análises e insights em tempo real</p>
       </div>
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Clock className="w-4 h-4" />
-          <span className="hidden sm:inline">Ultima atualização: {lastUpdated.toLocaleTimeString()}</span>
+          <Clock className="h-4 w-4" />
+          <span className="hidden sm:inline">
+            Ultima atualização: {lastUpdated.toLocaleTimeString()}
+          </span>
         </div>
         <DateRangeFilter value={dateRange} onChange={onDateRangeChange} />
         <Button
-            variant="outline"
-            size="sm"
-            onClick={onRefresh}
-            disabled={isLoading}
-            className="border-border hover:bg-secondary hover:text-accent"
+          variant="outline"
+          size="sm"
+          onClick={onRefresh}
+          disabled={isLoading}
+          className="border-border hover:bg-secondary hover:text-accent"
         >
-          <RefreshCw
-              className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`}
-          />
+          <RefreshCw className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
           {isLoading ? 'Atualizando...' : 'Atualizar'}
         </Button>
       </div>
